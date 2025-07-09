@@ -80,3 +80,29 @@ variable "instance_type" {
  type = string
  default = "t2.micro"
 }
+
+variable "app-1_userdata" {
+description = "userdata for app-1 ec2"
+type = string
+default = <<-EOF
+          #!/bin/bash
+          yum update -y
+          yum install -y httpd
+          systemctl start httpd
+          systemctl enable httpd
+          echo "<h1>welcome to app-1<h1>" > /var/www/html/index.html
+          EOF
+}
+
+variable "app-2_userdata" {
+description = "userdata for app-2 ec2"
+type = string
+default = <<-EOF
+          #!/bin/bash
+          yum update -y
+          yum install -y httpd
+          systemctl start httpd
+          systemctl enable httpd
+          echo "<h1>welcome to app-2<h1>" > /var/www/html/index.html
+          EOF
+}

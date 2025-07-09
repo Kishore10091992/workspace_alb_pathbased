@@ -123,6 +123,24 @@ resource "aws_network_interface" "main_ec2-2" {
  security_groups = [aws_security_group.main_sg.id]
 }
 
+resource "aws_eip" "main_app-1_eip" {
+ domain = "vpc"
+ network_interface = aws_network_interface.main_ec2-1.id
+
+ tags {
+  Name = "eip_app-1_${terraform.workspace}"
+ }
+}
+
+resource "aws_eip" "main_app-2_eip" {
+ domain = "vpc"
+ network_interface = aws_network_interface.main_ec2-2.id
+
+ tags {
+  Name = "eip_app-2_${terraform.workspace}"
+ }
+}
+
 resource "tls_private_key" "generate_key" {
   algorithm = "RSA"
   rsa_bits  = 4096
@@ -135,4 +153,48 @@ resource "aws_key_pair" "main_key" {
   tags {
    Name = "keypair-${terraform.workspace}"
   }
+}
+
+data "aws_ami" "main_amzn_linx" {
+ most_recent = true
+ owners = ["amazon"]
+
+ filters {
+  name = Name
+  values = ["amzn2-ami-hv2-*"]
+ }
+}
+
+resource "aws_instance" "main_app-1" {
+ instance_type = var.instance_type
+ ami = data.aws_ami.main_amzn_linx.id
+ key_name = aws_key_pair.main_key.key_name
+
+ network_interface {
+  device_index = 0
+  network_interface_id = aws_network_interface.main_ec2-1.id
+ }
+
+ user_data = var.app-1_userdata
+
+ tags {
+  Name = "app-1_${terraform.workspace}"
+ }
+}
+
+resource "aws_instance" "main_app-2" {
+ instance_type = var.instance_type
+ ami = data.aws_ami.main_amzn_linx.id
+ key_name = aws_key_pair.main_key.key_name
+
+ network_interface {
+  device_index = 1
+  network_interface_id = aws_network_interface.main_ec2-2.id
+ }
+
+ user_data = var.app-2_userdata
+
+ tags {
+  Name = "app-2_${terraform.workspace}"
+ }
 }
