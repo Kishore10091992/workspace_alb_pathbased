@@ -198,3 +198,94 @@ resource "aws_instance" "main_app-2" {
   Name = "app-2_${terraform.workspace}"
  }
 }
+
+resource "aws_lb" "main_lb" {
+ internal = var.lb_internal
+ load_balancer_type = var.lb_type
+ security_groups = [aws_security_group.main_sg.id]
+ subnets = [aws_subnet.main_subnet_1.id, aws_subnet.main_subnet_2.id]
+
+ tags {
+  Name = "main_lb-${terraform.workspace}"
+ }
+}
+
+resource "aws_target_group" "app-1_tg" {
+ port = 80
+ protocol = "HTTP"
+ vpc_id = aws_vpc.main_vpc.id
+
+ tags {
+  Name = "app-1_tg-${terraform.workspace}"
+ }
+}
+
+resource "aws_target_group_attachement" "app-1_tg_attach" {
+ target_group_arn = aws_target_group.app-1_tg.arn
+ target_id = aws_instance.main_app-1.id
+ port = 80
+}
+
+resource "aws_target_group" "app-2_tg" {
+ port = 80
+ protocol = "HTTP"
+ vpc_id = aws_vpc.main_vpc.id
+
+ tags {
+  Name = "app-2_tg-${terraform.workspace}"
+ }
+}
+
+resource "aws_target_group_attachement" "app-1_tg_attach" {
+ target_group_arn = aws_target_group.app-2_tg.arn
+ target_id = aws_instance.main_app-2.id
+ port = 80
+}
+
+resource "aws_lb_listener" "main_lb_listener"
+ port = 80
+ protocol = "HTTP"
+ load_balancer_arn = aws_lb.main_lb.arn
+
+ default_action {
+  type = "fixed-response"
+
+  fixed_response {
+   content_type "text/plain"
+   message_body "not found"
+   status_code = "404"
+  }
+ }
+}
+
+resource "aws_lb_listener_rule" "app-1_listener_rule" {
+ listener_arn = aws_lb_listener.main_lb_listener.arn
+ priority = 10
+
+ action {
+  type = "forward"
+  target_group_arn = aws_target_group.app-1_tg.arn
+ }
+
+ condition {
+  path_pattern {
+   values = ["/app1]
+  }
+ }
+}
+
+resource "aws_lb_listener_rule" "app-2_listener_rule" {
+ listener_arn = aws_lb_listener.main_lb_listener.arn
+ priority = 20
+
+ action {
+  type = "forward"
+  target_group_arn = aws_target_group.app-2_tg.arn
+ }
+
+ condition {
+  path_pattern {
+   values = ["/app2]
+  }
+ }
+}
