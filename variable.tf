@@ -106,3 +106,15 @@ default = <<-EOF
           echo "<h1>welcome to app-2<h1>" > /var/www/html/index.html
           EOF
 }
+
+variable "lb_type" {
+ description = "loadbalancer type"
+ type = string
+ default = "application"
+}
+
+variable "lb_internal"
+ description = loadbalancer internal status"
+ type = bool
+ default = "false"
+}
