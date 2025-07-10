@@ -93,3 +93,27 @@ output "ec2_app-2_id" {
  value = aws_instance.main_app-2.id
 }
 
+output "alb_arn" {
+ description = "load balancer arn"
+ value = aws_lb.main_lb.arn
+}
+
+output "alb_dns_name" {
+ description = "load balancer dns"
+ value = aws_lb.main.lb.dns_name
+}
+
+output "app-1_tg_arn" {
+ description = "app 1 target group arn"
+ value = aws_target_group.app-1_tg.arn
+}
+
+output "app-2_tg_arn" {
+ description = "app 2 target group arn"
+ value = aws_target_group.app-2_tg.arn
+}
+
+output "lb_listener_arn" {
+ description = "load balancer listener arn"
+ value = aws_lb_listener.main_lb_listener.arn
+}
