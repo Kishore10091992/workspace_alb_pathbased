@@ -100,17 +100,17 @@ output "alb_arn" {
 
 output "alb_dns_name" {
  description = "load balancer dns"
- value = aws_lb.main.lb.dns_name
+ value = aws_lb.main_lb.dns_name
 }
 
 output "app-1_tg_arn" {
  description = "app 1 target group arn"
- value = aws_target_group.app-1_tg.arn
+ value = aws_lb_target_group.app-1_tg.arn
 }
 
 output "app-2_tg_arn" {
  description = "app 2 target group arn"
- value = aws_target_group.app-2_tg.arn
+ value = aws_lb_target_group.app-2_tg.arn
 }
 
 output "lb_listener_arn" {
