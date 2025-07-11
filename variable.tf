@@ -113,8 +113,8 @@ variable "lb_type" {
  default = "application"
 }
 
-variable "lb_internal"
- description = loadbalancer internal status"
+variable "lb_internal" {
+ description = "loadbalancer internal status"
  type = bool
  default = "false"
 }
